@@ -1,0 +1,3 @@
+Hi
+
+this is qa file inside the staic flder
