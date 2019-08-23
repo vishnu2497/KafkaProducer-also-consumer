@@ -3,6 +3,7 @@ package com.ns.kafkaproducer.KafkaProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,22 +23,31 @@ public class KafkaProducerApplication {
     private String topic = "usertopic";
 
     @Autowired
-    private KafkaTemplate<String, Object> template;
+    private KafkaTemplate<String, User> template;
+
+    @Autowired
+    private KafkaTemplate<String, String> template1;
 
 
     @GetMapping(value = "/publish/{name}")
     public String publishMessage(@PathVariable String name) {
-        template.send(topic, "Hi" +  name  + "this is from springBoot Kafka prodicer");
+        template1.send(topic, "Hi" + name + "this is from springBoot Kafka prodicer");
         return "data published Succesfully";
     }
 
     @GetMapping(value = "/publishjson")
     public String publishJson() {
-            User user1=new User("vishnu",10);
+        User user1 = new User("vishnu", 10);
 
-            template.send(topic,user1);
+        template.send(topic, user1);
 
         return "Json data Published Successfully";
+
+    }
+
+    @KafkaListener(topics = "usertopic1", groupId = "asdf")
+    public void listenForConsumre(String data) {
+        System.out.println("Message From Consumer Side But uis is  in Producer==>" + data);
 
     }
 
